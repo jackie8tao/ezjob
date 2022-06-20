@@ -1,0 +1,53 @@
+syntax = "proto3";
+package proto;
+option go_package = "github.com/jackie8tao/ezjob/proto";
+
+message LogConfig {
+  string type = 1;
+  string level = 2;
+}
+
+message EtcdConfig {
+  repeated string endpoints = 1;
+  string user = 2;
+  string password = 3;
+}
+
+message MysqlConfig {
+  string addr = 1;
+  string user = 2;
+  string password = 3;
+  string db = 4;
+}
+
+message HttpConfig {
+  string addr = 1;
+  string upstream = 2;
+}
+
+message GrpcConfig {
+  string addr = 1;
+}
+
+message SrvConfig {
+  GrpcConfig grpc_cfg = 1;
+  HttpConfig http_cfg = 2;
+}
+
+message DispatcherConfig {
+  string type = 1;
+}
+
+message AlarmConfig {
+  string server_addr = 1;
+  string sender = 2;
+}
+
+message AppConfig {
+  LogConfig log = 1;
+  EtcdConfig etcd = 2;
+  SrvConfig srv = 3;
+  DispatcherConfig dispatcher = 4;
+  MysqlConfig mysql = 5;
+  AlarmConfig alarm = 6;
+}

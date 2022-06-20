@@ -1,0 +1,6 @@
+.gitignore
+buf.gen.yaml
+buf.work.yaml
+Dockerfile
+README.md
+Makefile

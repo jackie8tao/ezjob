@@ -1,0 +1,30 @@
+syntax = "proto3";
+package proto;
+option go_package = "github.com/jackie8tao/ezjob/proto";
+
+import "ezjob.proto";
+
+enum EventType {
+  RoleChanged = 0;
+  JobDispatched = 1;
+  JobModified = 2;
+}
+
+message PayloadRoleChanged {
+  string old_role = 1;
+  string new_role = 2;
+}
+
+message PayloadJobDispatched {
+  Job job = 1;
+  int32 exec_id = 2;
+}
+
+message PayloadJobModified {}
+
+message Event {
+  EventType type = 1;
+  PayloadRoleChanged role_changed = 2;
+  PayloadJobDispatched job_dispatched = 3;
+  PayloadJobModified job_modified = 4;
+}
