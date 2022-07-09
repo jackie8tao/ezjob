@@ -6,8 +6,9 @@ import (
 
 	"github.com/jackie8tao/ezjob/internal/pkg/event"
 	pb "github.com/jackie8tao/ezjob/proto"
+	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
-	clientv3 "go.etcd.io/etcd/client/v3"
+	etcdcli "go.etcd.io/etcd/client/v3"
 	"gorm.io/gorm"
 )
 
@@ -15,13 +16,13 @@ type Scheduler struct {
 	stopped bool
 	tasks   map[string]cron.EntryID
 	engine  *cron.Cron
-	cli     *clientv3.Client
+	cli     *etcdcli.Client
 	logger  logrus.FieldLogger
 	evtMgr  *event.Manager
 	db      *gorm.DB
 }
 
-func NewScheduler(cli *clientv3.Client, evtMgr *event.Manager, db *gorm.DB) *Scheduler {
+func NewScheduler(cli *etcdcli.Client, evtMgr *event.Manager, db *gorm.DB) *Scheduler {
 	s := &Scheduler{
 		stopped: false,
 		engine:  cron.New(cron.WithSeconds()),
@@ -138,9 +139,9 @@ func (s *Scheduler) resetSchedTasks(ctx context.Context) {
 }
 
 func (s *Scheduler) pullTasks(ctx context.Context) error {
-	opts := []clientv3.OpOption{
-		clientv3.WithPrefix(),
-		clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend),
+	opts := []etcdcli.OpOption{
+		etcdcli.WithPrefix(),
+		etcdcli.WithSort(etcdcli.SortByKey, etcdcli.SortDescend),
 	}
 	rsp, err := s.cli.Get(ctx, pb.JobKey, opts...)
 	if err != nil {
