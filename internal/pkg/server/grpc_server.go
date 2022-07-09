@@ -10,7 +10,7 @@ import (
 	"github.com/jackie8tao/ezjob/internal/model"
 	pb "github.com/jackie8tao/ezjob/proto"
 	log "github.com/sirupsen/logrus"
-	clientv3 "go.etcd.io/etcd/client/v3"
+	etcdcli "go.etcd.io/etcd/client/v3"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"gorm.io/gorm"
@@ -19,12 +19,12 @@ import (
 type GrpcServer struct {
 	pb.UnimplementedEzJobServer
 	cfg    *pb.GrpcConfig
-	cli    *clientv3.Client
+	cli    *etcdcli.Client
 	logger log.FieldLogger
 	db     *gorm.DB
 }
 
-func NewGrpcServer(cfg *pb.GrpcConfig, cli *clientv3.Client, db *gorm.DB) *GrpcServer {
+func NewGrpcServer(cfg *pb.GrpcConfig, cli *etcdcli.Client, db *gorm.DB) *GrpcServer {
 	return &GrpcServer{
 		cli:    cli,
 		cfg:    cfg,
@@ -80,32 +80,12 @@ func (s *GrpcServer) Close() error {
 	return nil
 }
 
-func (s *GrpcServer) CreateJob(ctx context.Context, job *pb.Job) (rsp *emptypb.Empty, err error) {
-	err = job.Validate()
-	if err != nil {
-		return
-	}
-
-	data, err := json.Marshal(job)
-	if err != nil {
-		return
-	}
-	_, err = s.cli.Put(ctx, pb.GenJobKey(job.Name), string(data))
-	if err != nil {
-		return
-	}
-
-	rsp = &emptypb.Empty{}
-
-	return
-}
-
 func (s *GrpcServer) ListJob(ctx context.Context, req *pb.ListJobReq) (rsp *pb.ListJobRsp, err error) {
-	var opts []clientv3.OpOption
+	var opts []etcdcli.OpOption
 	key := pb.GenJobKey(req.Name)
 	if req.Name == "" {
-		opts = append(opts, clientv3.WithPrefix())
-		opts = append(opts, clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+		opts = append(opts, etcdcli.WithPrefix())
+		opts = append(opts, etcdcli.WithSort(etcdcli.SortByKey, etcdcli.SortDescend))
 	}
 
 	ret, err := s.cli.Get(ctx, key, opts...)
