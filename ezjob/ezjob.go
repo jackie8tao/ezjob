@@ -9,7 +9,7 @@ import (
 	"github.com/jackie8tao/ezjob/internal/pkg/cluster"
 	"github.com/jackie8tao/ezjob/internal/pkg/dispatcher"
 	"github.com/jackie8tao/ezjob/internal/pkg/event"
-	extcron2 "github.com/jackie8tao/ezjob/internal/pkg/extcron"
+	"github.com/jackie8tao/ezjob/internal/pkg/extcron"
 	server2 "github.com/jackie8tao/ezjob/internal/pkg/server"
 	"github.com/jackie8tao/ezjob/internal/pkg/watcher"
 	pb "github.com/jackie8tao/ezjob/proto"
@@ -19,12 +19,12 @@ import (
 type EzJob struct {
 	evtMgr     *event.Manager
 	node       *cluster.Node
-	scheduler  *extcron2.Scheduler
+	scheduler  *extcron.Scheduler
 	dispatcher *dispatcher.Dispatcher
 	grpcSrv    *server2.GrpcServer
 	httpSrv    *server2.HttpServer
 	watcher    *watcher.Watcher
-	sentry     *extcron2.Sentry
+	sentry     *extcron.Sentry
 }
 
 func NewEzJob(cfg *pb.AppConfig) (*EzJob, error) {
