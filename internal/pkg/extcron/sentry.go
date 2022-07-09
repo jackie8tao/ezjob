@@ -9,16 +9,16 @@ import (
 	"github.com/jackie8tao/ezjob/internal/model"
 	"github.com/jackie8tao/ezjob/internal/pkg/event"
 	pb "github.com/jackie8tao/ezjob/proto"
-	"github.com/jackie8tao/ezjob/utils/jobutil"
+	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
-	clientv3 "go.etcd.io/etcd/client/v3"
+	etcdcli "go.etcd.io/etcd/client/v3"
 	"gorm.io/gorm"
 )
 
 type Sentry struct {
 	engine *cron.Cron
 	db     *gorm.DB
-	cli    *clientv3.Client
+	cli    *etcdcli.Client
 	logger logrus.FieldLogger
 	evtMgr *event.Manager
 
@@ -29,7 +29,7 @@ type Sentry struct {
 	alarmLock  sync.Locker
 }
 
-func NewSentry(cli *clientv3.Client, db *gorm.DB, evtMgr *event.Manager) *Sentry {
+func NewSentry(cli *etcdcli.Client, db *gorm.DB, evtMgr *event.Manager) *Sentry {
 	return &Sentry{
 		engine:     cron.New(),
 		db:         db,
@@ -202,7 +202,7 @@ func (s *Sentry) updateExec(job *pb.Job, exec model.Execution) error {
 }
 
 func (s *Sentry) getJob(taskName string) (*pb.Job, error) {
-	rsp, err := s.cli.Get(context.Background(), jobutil.JobKey(taskName))
+	rsp, err := s.cli.Get(context.Background(), pb.GenJobKey(taskName))
 	if err != nil {
 		return nil, err
 	}

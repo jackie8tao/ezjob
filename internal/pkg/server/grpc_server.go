@@ -9,7 +9,6 @@ import (
 
 	"github.com/jackie8tao/ezjob/internal/model"
 	pb "github.com/jackie8tao/ezjob/proto"
-	"github.com/jackie8tao/ezjob/utils/jobutil"
 	log "github.com/sirupsen/logrus"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"google.golang.org/grpc"
@@ -91,7 +90,7 @@ func (s *GrpcServer) CreateJob(ctx context.Context, job *pb.Job) (rsp *emptypb.E
 	if err != nil {
 		return
 	}
-	_, err = s.cli.Put(ctx, jobutil.JobKey(job.Name), string(data))
+	_, err = s.cli.Put(ctx, pb.GenJobKey(job.Name), string(data))
 	if err != nil {
 		return
 	}
@@ -103,7 +102,7 @@ func (s *GrpcServer) CreateJob(ctx context.Context, job *pb.Job) (rsp *emptypb.E
 
 func (s *GrpcServer) ListJob(ctx context.Context, req *pb.ListJobReq) (rsp *pb.ListJobRsp, err error) {
 	var opts []clientv3.OpOption
-	key := jobutil.JobKey(req.Name)
+	key := pb.GenJobKey(req.Name)
 	if req.Name == "" {
 		opts = append(opts, clientv3.WithPrefix())
 		opts = append(opts, clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
@@ -137,7 +136,7 @@ func (s *GrpcServer) DelJob(ctx context.Context, req *pb.DelJobReq) (rsp *emptyp
 		return
 	}
 
-	_, err = s.cli.Delete(ctx, jobutil.JobKey(req.Name))
+	_, err = s.cli.Delete(ctx, pb.GenJobKey(req.Name))
 	if err != nil {
 		return
 	}
@@ -153,7 +152,7 @@ func (s *GrpcServer) RunJob(ctx context.Context, req *pb.RunJobReq) (rsp *emptyp
 		return
 	}
 
-	tasks, err := s.cli.Get(ctx, jobutil.JobKey(req.Name))
+	tasks, err := s.cli.Get(ctx, pb.GenJobKey(req.Name))
 	if err != nil {
 		return
 	}
@@ -179,7 +178,7 @@ func (s *GrpcServer) RunJob(ctx context.Context, req *pb.RunJobReq) (rsp *emptyp
 	if err != nil {
 		return
 	}
-	_, err = s.cli.Put(ctx, jobutil.TriggerKey(req.Name), string(data))
+	_, err = s.cli.Put(ctx, pb.GenTriggerKey(req.Name), string(data))
 	if err != nil {
 		return
 	}
