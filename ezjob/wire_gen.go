@@ -34,20 +34,22 @@ func watcherProvider(cfg *proto.AppConfig) *watcher.Watcher {
 	return watcherWatcher
 }
 
-func grpcServerProvider(cfg *proto.AppConfig) *server.GrpcServer {
+func reporterServerProvider(cfg *proto.AppConfig) *server.ReporterServer {
 	grpcConfig := newGrpcCfg(cfg)
 	etcdConfig := newEtcdCfg(cfg)
 	client := newEtcdCli(etcdConfig)
 	mysqlConfig := newMysqlCfg(cfg)
 	db := newGormDB(mysqlConfig)
-	grpcServer := server.NewGrpcServer(grpcConfig, client, db)
-	return grpcServer
+	reporterServer := server.NewReporterServer(grpcConfig, client, db)
+	return reporterServer
 }
 
-func httpServerProvider(cfg *proto.AppConfig) *server.HttpServer {
+func adminServerProvider(cfg *proto.AppConfig) *server.AdminServer {
 	httpConfig := newHttpCfg(cfg)
-	httpServer := server.NewHttpServer(httpConfig)
-	return httpServer
+	etcdConfig := newEtcdCfg(cfg)
+	client := newEtcdCli(etcdConfig)
+	adminServer := server.NewAdminServer(httpConfig, client)
+	return adminServer
 }
 
 func schedProvider(cfg *proto.AppConfig) *extcron.Scheduler {

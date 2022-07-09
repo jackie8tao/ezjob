@@ -5,8 +5,8 @@ proto:
 		--validate_out=proto --validate_opt=paths=source_relative,lang=go \
 		proto/*.proto
 
-.PHONY: proto
-inject:
+.PHONY: inject
+inject: proto
 	@protoc-go-inject-tag -input=proto/*.pb.go
 
 #generate dependency using wire

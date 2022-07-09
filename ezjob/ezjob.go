@@ -10,7 +10,7 @@ import (
 	"github.com/jackie8tao/ezjob/internal/pkg/dispatcher"
 	"github.com/jackie8tao/ezjob/internal/pkg/event"
 	"github.com/jackie8tao/ezjob/internal/pkg/extcron"
-	server2 "github.com/jackie8tao/ezjob/internal/pkg/server"
+	"github.com/jackie8tao/ezjob/internal/pkg/server"
 	"github.com/jackie8tao/ezjob/internal/pkg/watcher"
 	pb "github.com/jackie8tao/ezjob/proto"
 	log "github.com/sirupsen/logrus"
@@ -21,10 +21,10 @@ type EzJob struct {
 	node       *cluster.Node
 	scheduler  *extcron.Scheduler
 	dispatcher *dispatcher.Dispatcher
-	grpcSrv    *server2.GrpcServer
-	httpSrv    *server2.HttpServer
+	reporter   *server.ReporterServer
 	watcher    *watcher.Watcher
 	sentry     *extcron.Sentry
+	admin      *server.AdminServer
 }
 
 func NewEzJob(cfg *pb.AppConfig) (*EzJob, error) {
@@ -34,10 +34,10 @@ func NewEzJob(cfg *pb.AppConfig) (*EzJob, error) {
 		node:       nodeProvider(cfg),
 		scheduler:  schedProvider(cfg),
 		dispatcher: dispatcherProvider(cfg),
-		grpcSrv:    grpcServerProvider(cfg),
+		reporter:   reporterServerProvider(cfg),
 		watcher:    watcherProvider(cfg),
-		httpSrv:    httpServerProvider(cfg),
 		sentry:     sentryProvider(cfg),
+		admin:      adminServerProvider(cfg),
 	}
 
 	return obj, nil
@@ -98,8 +98,7 @@ func (e *EzJob) modules() []pb.Module {
 	return []pb.Module{
 		e.node,
 		e.watcher,
-		e.grpcSrv,
-		e.httpSrv,
+		e.reporter,
 		e.scheduler,
 		e.dispatcher,
 		e.sentry,

@@ -8,8 +8,8 @@ import (
 	"github.com/jackie8tao/ezjob/internal/pkg/cluster"
 	"github.com/jackie8tao/ezjob/internal/pkg/dispatcher"
 	"github.com/jackie8tao/ezjob/internal/pkg/event"
-	extcron2 "github.com/jackie8tao/ezjob/internal/pkg/extcron"
-	server2 "github.com/jackie8tao/ezjob/internal/pkg/server"
+	"github.com/jackie8tao/ezjob/internal/pkg/extcron"
+	"github.com/jackie8tao/ezjob/internal/pkg/server"
 	"github.com/jackie8tao/ezjob/internal/pkg/watcher"
 	pb "github.com/jackie8tao/ezjob/proto"
 )
@@ -34,36 +34,38 @@ func watcherProvider(cfg *pb.AppConfig) *watcher.Watcher {
 	return &watcher.Watcher{}
 }
 
-func grpcServerProvider(cfg *pb.AppConfig) *server2.GrpcServer {
+func reporterServerProvider(cfg *pb.AppConfig) *server.ReporterServer {
 	wire.Build(
-		server2.NewGrpcServer,
+		server.NewReporterServer,
 		newEtcdCli,
 		newEtcdCfg,
 		newGrpcCfg,
 		newMysqlCfg,
 		newGormDB,
 	)
-	return &server2.GrpcServer{}
+	return &server.ReporterServer{}
 }
 
-func httpServerProvider(cfg *pb.AppConfig) *server2.HttpServer {
+func adminServerProvider(cfg *pb.AppConfig) *server.AdminServer {
 	wire.Build(
-		server2.NewHttpServer,
+		server.NewAdminServer,
+		newEtcdCli,
+		newEtcdCfg,
 		newHttpCfg,
 	)
-	return &server2.HttpServer{}
+	return &server.AdminServer{}
 }
 
-func schedProvider(cfg *pb.AppConfig) *extcron2.Scheduler {
+func schedProvider(cfg *pb.AppConfig) *extcron.Scheduler {
 	wire.Build(
-		extcron2.NewScheduler,
+		extcron.NewScheduler,
 		newEtcdCli,
 		newEtcdCfg,
 		event.NewManager,
 		newMysqlCfg,
 		newGormDB,
 	)
-	return &extcron2.Scheduler{}
+	return &extcron.Scheduler{}
 }
 
 func dispatcherProvider(cfg *pb.AppConfig) *dispatcher.Dispatcher {
@@ -79,14 +81,14 @@ func dispatcherProvider(cfg *pb.AppConfig) *dispatcher.Dispatcher {
 	return &dispatcher.Dispatcher{}
 }
 
-func sentryProvider(cfg *pb.AppConfig) *extcron2.Sentry {
+func sentryProvider(cfg *pb.AppConfig) *extcron.Sentry {
 	wire.Build(
-		extcron2.NewSentry,
+		extcron.NewSentry,
 		newEtcdCli,
 		newEtcdCfg,
 		event.NewManager,
 		newMysqlCfg,
 		newGormDB,
 	)
-	return &extcron2.Sentry{}
+	return &extcron.Sentry{}
 }

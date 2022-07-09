@@ -60,6 +60,7 @@ message ListJobRsp {
 }
 
 message DelJobReq {
+  // @gotags: param:"name"
   string name = 1 [(validate.rules).string = {
     pattern: "^[a-zA-Z0-9]+$",
     max_len: 32,
@@ -68,6 +69,7 @@ message DelJobReq {
 }
 
 message RunJobReq {
+  // @gotags: param:"name"
   string name = 1 [(validate.rules).string = {
     pattern: "^[a-zA-Z0-9]+$",
     max_len: 32
@@ -88,6 +90,6 @@ message ReportReq {
   int32 execution_id = 4 [(validate.rules).int32.gt = 0];
 }
 
-service EzJob {
+service Reporter {
   rpc Report (ReportReq) returns (google.protobuf.Empty);
 }
