@@ -7,10 +7,9 @@ import (
 	"sync"
 
 	"github.com/jackie8tao/ezjob/internal/model"
-	"github.com/jackie8tao/ezjob/pkg/event"
+	"github.com/jackie8tao/ezjob/internal/pkg/event"
 	pb "github.com/jackie8tao/ezjob/proto"
 	"github.com/jackie8tao/ezjob/utils/jobutil"
-	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"gorm.io/gorm"

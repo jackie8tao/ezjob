@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/jackie8tao/ezjob/pkg/event"
+	"github.com/jackie8tao/ezjob/internal/pkg/event"
 	pb "github.com/jackie8tao/ezjob/proto"
 	log "github.com/sirupsen/logrus"
 	"go.etcd.io/etcd/api/v3/mvccpb"

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jackie8tao/ezjob/pkg/event"
+	"github.com/jackie8tao/ezjob/internal/pkg/event"
 	pb "github.com/jackie8tao/ezjob/proto"
 	log "github.com/sirupsen/logrus"
 	clientv3 "go.etcd.io/etcd/client/v3"

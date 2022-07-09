@@ -6,39 +6,38 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"github.com/jackie8tao/ezjob/pkg/cluster"
-	"github.com/jackie8tao/ezjob/pkg/dispatcher"
-	"github.com/jackie8tao/ezjob/pkg/event"
-	"github.com/jackie8tao/ezjob/pkg/extcron"
-	"github.com/jackie8tao/ezjob/pkg/server"
-	"github.com/jackie8tao/ezjob/pkg/watcher"
+	"github.com/jackie8tao/ezjob/internal/pkg/cluster"
+	"github.com/jackie8tao/ezjob/internal/pkg/dispatcher"
+	"github.com/jackie8tao/ezjob/internal/pkg/event"
+	extcron2 "github.com/jackie8tao/ezjob/internal/pkg/extcron"
+	server2 "github.com/jackie8tao/ezjob/internal/pkg/server"
+	"github.com/jackie8tao/ezjob/internal/pkg/watcher"
 	pb "github.com/jackie8tao/ezjob/proto"
-	"github.com/jackie8tao/ezjob/utils/wireutil"
 	log "github.com/sirupsen/logrus"
 )
 
 type EzJob struct {
 	evtMgr     *event.Manager
 	node       *cluster.Node
-	scheduler  *extcron.Scheduler
+	scheduler  *extcron2.Scheduler
 	dispatcher *dispatcher.Dispatcher
-	grpcSrv    *server.GrpcServer
-	httpSrv    *server.HttpServer
+	grpcSrv    *server2.GrpcServer
+	httpSrv    *server2.HttpServer
 	watcher    *watcher.Watcher
-	sentry     *extcron.Sentry
+	sentry     *extcron2.Sentry
 }
 
 func NewEzJob(cfg *pb.AppConfig) (*EzJob, error) {
 	log.SetLevel(log.DebugLevel)
 	obj := &EzJob{
 		evtMgr:     event.NewManager(),
-		node:       wireutil.NodeProvider(cfg),
-		scheduler:  wireutil.SchedProvider(cfg),
-		dispatcher: wireutil.DispatcherProvider(cfg),
-		grpcSrv:    wireutil.GrpcServerProvider(cfg),
-		watcher:    wireutil.WatcherProvider(cfg),
-		httpSrv:    wireutil.HttpServerProvider(cfg),
-		sentry:     wireutil.SentryProvider(cfg),
+		node:       nodeProvider(cfg),
+		scheduler:  schedProvider(cfg),
+		dispatcher: dispatcherProvider(cfg),
+		grpcSrv:    grpcServerProvider(cfg),
+		watcher:    watcherProvider(cfg),
+		httpSrv:    httpServerProvider(cfg),
+		sentry:     sentryProvider(cfg),
 	}
 
 	return obj, nil

@@ -1,10 +1,10 @@
-package wireutil
+package ezjob
 
 import (
 	"fmt"
 
 	pb "github.com/jackie8tao/ezjob/proto"
-	clientv3 "go.etcd.io/etcd/client/v3"
+	etcdcli "go.etcd.io/etcd/client/v3"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -48,8 +48,8 @@ func newMysqlCfg(cfg *pb.AppConfig) *pb.MysqlConfig {
 	return cfg.Mysql
 }
 
-func newEtcdCli(cfg *pb.EtcdConfig) *clientv3.Client {
-	cli, err := clientv3.New(clientv3.Config{
+func newEtcdCli(cfg *pb.EtcdConfig) *etcdcli.Client {
+	cli, err := etcdcli.New(etcdcli.Config{
 		Endpoints: cfg.Endpoints,
 		Username:  cfg.User,
 		Password:  cfg.Password,

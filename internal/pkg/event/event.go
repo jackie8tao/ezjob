@@ -10,7 +10,6 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
 	pb "github.com/jackie8tao/ezjob/proto"
-	"github.com/jackie8tao/ezjob/utils/jsonutil"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -108,8 +107,11 @@ func (m *Manager) SubEvent(evtType pb.EventType, handlers []pb.EventHandler) {
 }
 
 func (m *Manager) PubEvent(evt *pb.Event) error {
-	data := jsonutil.ToBytes(evt)
-	err := m.evtPub.Publish(pb.EventKey, message.NewMessage(watermill.NewUUID(), data))
+	data, err := json.Marshal(evt)
+	if err != nil {
+		return err
+	}
+	err = m.evtPub.Publish(pb.EventKey, message.NewMessage(watermill.NewUUID(), data))
 	if err != nil {
 		return err
 	}

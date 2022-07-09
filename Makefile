@@ -2,6 +2,7 @@
 proto:
 	buf generate
 
+#generate dependency using wire
 .PHONY: wire
 wire:
-	cd utils/wireutil && wire
+	cd ezjob && wire

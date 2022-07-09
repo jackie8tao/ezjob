@@ -4,21 +4,21 @@
 //go:build !wireinject
 // +build !wireinject
 
-package wireutil
+package ezjob
 
 import (
-	"github.com/jackie8tao/ezjob/pkg/cluster"
-	"github.com/jackie8tao/ezjob/pkg/dispatcher"
-	"github.com/jackie8tao/ezjob/pkg/event"
-	"github.com/jackie8tao/ezjob/pkg/extcron"
-	"github.com/jackie8tao/ezjob/pkg/server"
-	"github.com/jackie8tao/ezjob/pkg/watcher"
+	"github.com/jackie8tao/ezjob/internal/pkg/cluster"
+	"github.com/jackie8tao/ezjob/internal/pkg/dispatcher"
+	"github.com/jackie8tao/ezjob/internal/pkg/event"
+	"github.com/jackie8tao/ezjob/internal/pkg/extcron"
+	"github.com/jackie8tao/ezjob/internal/pkg/server"
+	"github.com/jackie8tao/ezjob/internal/pkg/watcher"
 	"github.com/jackie8tao/ezjob/proto"
 )
 
 // Injectors from wire.go:
 
-func NodeProvider(cfg *proto.AppConfig) *cluster.Node {
+func nodeProvider(cfg *proto.AppConfig) *cluster.Node {
 	etcdConfig := newEtcdCfg(cfg)
 	client := newEtcdCli(etcdConfig)
 	manager := event.NewManager()
@@ -26,7 +26,7 @@ func NodeProvider(cfg *proto.AppConfig) *cluster.Node {
 	return node
 }
 
-func WatcherProvider(cfg *proto.AppConfig) *watcher.Watcher {
+func watcherProvider(cfg *proto.AppConfig) *watcher.Watcher {
 	etcdConfig := newEtcdCfg(cfg)
 	client := newEtcdCli(etcdConfig)
 	manager := event.NewManager()
@@ -34,7 +34,7 @@ func WatcherProvider(cfg *proto.AppConfig) *watcher.Watcher {
 	return watcherWatcher
 }
 
-func GrpcServerProvider(cfg *proto.AppConfig) *server.GrpcServer {
+func grpcServerProvider(cfg *proto.AppConfig) *server.GrpcServer {
 	grpcConfig := newGrpcCfg(cfg)
 	etcdConfig := newEtcdCfg(cfg)
 	client := newEtcdCli(etcdConfig)
@@ -44,13 +44,13 @@ func GrpcServerProvider(cfg *proto.AppConfig) *server.GrpcServer {
 	return grpcServer
 }
 
-func HttpServerProvider(cfg *proto.AppConfig) *server.HttpServer {
+func httpServerProvider(cfg *proto.AppConfig) *server.HttpServer {
 	httpConfig := newHttpCfg(cfg)
 	httpServer := server.NewHttpServer(httpConfig)
 	return httpServer
 }
 
-func SchedProvider(cfg *proto.AppConfig) *extcron.Scheduler {
+func schedProvider(cfg *proto.AppConfig) *extcron.Scheduler {
 	etcdConfig := newEtcdCfg(cfg)
 	client := newEtcdCli(etcdConfig)
 	manager := event.NewManager()
@@ -60,7 +60,7 @@ func SchedProvider(cfg *proto.AppConfig) *extcron.Scheduler {
 	return scheduler
 }
 
-func DispatcherProvider(cfg *proto.AppConfig) *dispatcher.Dispatcher {
+func dispatcherProvider(cfg *proto.AppConfig) *dispatcher.Dispatcher {
 	dispatcherConfig := newDispatcherCfg(cfg)
 	etcdConfig := newEtcdCfg(cfg)
 	client := newEtcdCli(etcdConfig)
@@ -71,7 +71,7 @@ func DispatcherProvider(cfg *proto.AppConfig) *dispatcher.Dispatcher {
 	return dispatcherDispatcher
 }
 
-func SentryProvider(cfg *proto.AppConfig) *extcron.Sentry {
+func sentryProvider(cfg *proto.AppConfig) *extcron.Sentry {
 	etcdConfig := newEtcdCfg(cfg)
 	client := newEtcdCli(etcdConfig)
 	mysqlConfig := newMysqlCfg(cfg)
